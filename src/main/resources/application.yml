@@ -1,9 +1,28 @@
-kafka:
-  bootstrap-servers: "46.101.136.244:9092"
-  topic: "sensor"
+app:
+  database: "taaja"
 
 quarkus:
   http:
     port: 8093
+    cors: true
+  mongodb:
+    connection-string: mongodb://taaja-mongodb:27017
+
 
 "%dev":
+  app:
+    database: "dev-taaja"
+
+  #Mongo Config
+  quarkus:
+    mongodb:
+      connection-string: mongodb://localhost:27017
+
+"%test":
+  app:
+    database: "test-taaja"
+
+  #Mongo Config
+  quarkus:
+    mongodb:
+      connection-string: mongodb://localhost:27017
