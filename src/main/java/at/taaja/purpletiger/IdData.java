@@ -10,7 +10,6 @@ import java.util.List;
 @Data
 public class IdData {
 
-
     @Data
     public static class Extension{
 
@@ -30,7 +29,6 @@ public class IdData {
             }
         }
 
-
         private Type type;
         private String uuid;
 
@@ -38,9 +36,13 @@ public class IdData {
 
 
     List<Extension> extensions;
-    String longitude;
-    String latitude;
-    String altitude;
+
+    float longitude;
+    float latitude;
+
+    //nullable
+    Float altitude;
+
     Date created;
 
     public IdData(){

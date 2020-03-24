@@ -1,5 +1,7 @@
 package at.taaja.purpletiger;
 
+import jdk.internal.jline.internal.Nullable;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
@@ -9,9 +11,9 @@ public class GeoCodingResource {
 
     @GET
     public IdData getPos(
-            @QueryParam("longitude") String longitude,
-            @QueryParam("latitude") String latitude,
-            @QueryParam("altitude") String altitude
+            @QueryParam("longitude") float longitude,
+            @QueryParam("latitude") float latitude,
+            @QueryParam("altitude") Float altitude
     ) {
         IdData idData = new IdData();
         idData.setAltitude(altitude);
@@ -26,8 +28,8 @@ public class GeoCodingResource {
 
     @GET
     public IdData getPos(
-            @QueryParam("longitude") String longitude,
-            @QueryParam("latitude") String latitude
+            @QueryParam("longitude") float longitude,
+            @QueryParam("latitude") float latitude
     ) {
         return this.getPos(longitude, latitude, null);
     }
