@@ -1,8 +1,12 @@
 package at.taaja.purpletiger;
 
-import jdk.internal.jline.internal.Nullable;
+import io.taaja.models.zoning.Extension;
+import io.taaja.models.zoning.LocationInformation;
 
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 @Produces(MediaType.APPLICATION_JSON)
@@ -10,24 +14,26 @@ import javax.ws.rs.core.MediaType;
 public class GeoCodingResource {
 
     @GET
-    public IdData getPos(
+    public LocationInformation getPos(
             @QueryParam("longitude") float longitude,
             @QueryParam("latitude") float latitude,
             @QueryParam("altitude") Float altitude
     ) {
-        IdData idData = new IdData();
-        idData.setAltitude(altitude);
-        idData.setLatitude(latitude);
-        idData.setLongitude(longitude);
-        IdData.Extension extension = new IdData.Extension();
-        extension.setType(IdData.Extension.Type.Area);
-        extension.setUuid("c56b3543-6853-4d86-a7bc-1cde673a5582");
-        idData.getExtensions().add(extension);
-        return idData;
+
+        LocationInformation locationInformation = new LocationInformation();
+        locationInformation.setAltitude(altitude);
+        locationInformation.setLatitude(latitude);
+        locationInformation.setLongitude(longitude);
+
+        Extension extension = new Extension();
+        extension.setType(Extension.ExtensionType.Area);
+        extension.setId("c56b3543-6853-4d86-a7bc-1cde673a5582");
+        locationInformation.getExtensions().add(extension);
+        return locationInformation;
     }
 
     @GET
-    public IdData getPos(
+    public LocationInformation getPos(
             @QueryParam("longitude") float longitude,
             @QueryParam("latitude") float latitude
     ) {
