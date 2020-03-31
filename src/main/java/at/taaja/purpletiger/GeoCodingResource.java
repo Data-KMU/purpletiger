@@ -27,7 +27,7 @@ public class GeoCodingResource {
 
         Extension extension = new Extension();
         extension.setType(Extension.ExtensionType.Area);
-        extension.setId("c56b3543-6853-4d86-a7bc-1cde673a5582");
+        extension.setUuid("c56b3543-6853-4d86-a7bc-1cde673a5582");
         locationInformation.getExtensions().add(extension);
         return locationInformation;
     }
