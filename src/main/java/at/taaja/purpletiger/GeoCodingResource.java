@@ -1,7 +1,8 @@
 package at.taaja.purpletiger;
 
-import io.taaja.models.zoning.Extension;
-import io.taaja.models.zoning.LocationInformation;
+
+import io.taaja.models.spatial.info.ExtensionIdentity;
+import io.taaja.models.spatial.info.LocationInformation;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -25,9 +26,8 @@ public class GeoCodingResource {
         locationInformation.setLatitude(latitude);
         locationInformation.setLongitude(longitude);
 
-        Extension extension = new Extension();
-        extension.setType(Extension.ExtensionType.Area);
-        extension.setUuid("c56b3543-6853-4d86-a7bc-1cde673a5582");
+        ExtensionIdentity extension = new ExtensionIdentity();
+        extension.setId("c56b3543-6853-4d86-a7bc-1cde673a5582");
         locationInformation.getExtensions().add(extension);
         return locationInformation;
     }
