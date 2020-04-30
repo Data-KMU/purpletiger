@@ -51,7 +51,7 @@ public class GeoCodingResource {
 
 
     @POST
-    @Path("/affectedAreas")
+    @Path("/intersectingExtensions")
     @JsonView({SpatialRecordView.Identity.class})
     @Consumes(MediaType.APPLICATION_JSON)
     public LocationInformation getAffectedAreas(SpatialEntity spatialEntity) {
