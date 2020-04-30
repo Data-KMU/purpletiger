@@ -9,12 +9,13 @@
     <body>
         <h1>Purple Tiger</h1>
         <p>
-            Reverse geocoding service. <br />
+            Reverse geo-coding service. <br />
             Returns an array of corridor or area<br>
         </p>
         <ul>
-            <li>GET /v1/encode?longitude={}&latitude={}</li>
-            <li>GET /v1/encode?longitude={}&latitude={}&altitude={}</li>
+            <li>GET /v1/encode/position?longitude={}&latitude={}</li>
+            <li>GET /v1/encode/position?longitude={}&latitude={}&altitude={}</li>
+            <li>POST /v1/encode/affectedAreas (needs a SpatialExtension as Post-Body)</li>
         </ul>
     </body>
 </html>

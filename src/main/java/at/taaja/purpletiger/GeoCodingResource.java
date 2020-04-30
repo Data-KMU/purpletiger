@@ -1,13 +1,13 @@
 package at.taaja.purpletiger;
 
 
-import io.taaja.models.spatial.info.ExtensionIdentity;
-import io.taaja.models.spatial.info.LocationInformation;
+import com.fasterxml.jackson.annotation.JsonView;
+import io.taaja.models.generic.LocationInformation;
+import io.taaja.models.record.spatial.Area;
+import io.taaja.models.record.spatial.SpatialEntity;
+import io.taaja.models.views.SpatialRecordView;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @Produces(MediaType.APPLICATION_JSON)
@@ -15,28 +15,58 @@ import javax.ws.rs.core.MediaType;
 public class GeoCodingResource {
 
     @GET
+    @Path("/position")
+    @JsonView({SpatialRecordView.Identity.class})
     public LocationInformation getPos(
             @QueryParam("longitude") float longitude,
             @QueryParam("latitude") float latitude,
             @QueryParam("altitude") Float altitude
     ) {
 
+        //todo: retrieve SpatialEntity from DB
+
         LocationInformation locationInformation = new LocationInformation();
         locationInformation.setAltitude(altitude);
         locationInformation.setLatitude(latitude);
         locationInformation.setLongitude(longitude);
 
-        ExtensionIdentity extension = new ExtensionIdentity();
+
+        SpatialEntity extension = new Area();
         extension.setId("c56b3543-6853-4d86-a7bc-1cde673a5582");
-        locationInformation.getExtensions().add(extension);
+        locationInformation.getSpatialEntities().add(extension);
+
+
         return locationInformation;
     }
 
     @GET
+    @Path("/position")
+    @JsonView({SpatialRecordView.Identity.class})
     public LocationInformation getPos(
             @QueryParam("longitude") float longitude,
             @QueryParam("latitude") float latitude
     ) {
         return this.getPos(longitude, latitude, null);
     }
+
+
+    @POST
+    @Path("/affectedAreas")
+    @JsonView({SpatialRecordView.Identity.class})
+    @Consumes(MediaType.APPLICATION_JSON)
+    public LocationInformation getAffectedAreas(SpatialEntity spatialEntity) {
+
+        //todo: retrieve SpatialEntity from DB
+        LocationInformation locationInformation = new LocationInformation();
+        SpatialEntity extension = new Area();
+        extension.setId("c56b3543-6853-4d86-a7bc-1cde673a5582");
+        locationInformation.getSpatialEntities().add(extension);
+
+
+        return locationInformation;
+    }
+
+
+
+
 }
