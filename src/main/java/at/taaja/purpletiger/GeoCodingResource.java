@@ -11,11 +11,11 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @Produces(MediaType.APPLICATION_JSON)
-@Path("/v1/encode")
+@Path("/v1")
 public class GeoCodingResource {
 
     @GET
-    @Path("/position")
+    @Path("/encode/position")
     @JsonView({SpatialRecordView.Identity.class})
     public LocationInformation getPos(
             @QueryParam("longitude") float longitude,
@@ -40,7 +40,7 @@ public class GeoCodingResource {
     }
 
     @GET
-    @Path("/position")
+    @Path("/encode/position")
     @JsonView({SpatialRecordView.Identity.class})
     public LocationInformation getPos(
             @QueryParam("longitude") float longitude,
@@ -51,7 +51,7 @@ public class GeoCodingResource {
 
 
     @POST
-    @Path("/intersectingExtensions")
+    @Path("/calculate/intersectingExtensions")
     @JsonView({SpatialRecordView.Identity.class})
     @Consumes(MediaType.APPLICATION_JSON)
     public LocationInformation getAffectedAreas(SpatialEntity spatialEntity) {
@@ -65,8 +65,6 @@ public class GeoCodingResource {
 
         return locationInformation;
     }
-
-
 
 
 }
