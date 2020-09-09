@@ -1,0 +1,47 @@
+{
+  "type": "Area",
+  "priority": 1000,
+  "extensionBehaviour": "trafficZone",
+  "created": 1599661431750,
+  "validFrom": 1599661431750,
+  "validUntil": 1599661431750,
+  "actuators": {
+    "79fc5f06-c370-4bee-9d5f-ba7254bf2bb8": {
+      "modified": 1599661431750,
+      "position": {
+        "longitude": 46.34,
+        "latitude": 11.12,
+        "altitude": null
+      }
+    }
+  },
+  "sensors": null,
+  "samplers": null,
+  "elevation": 123.0,
+  "height": 456.0,
+  "coordinates": [
+    [
+      [
+        12.181262969970701,
+        47.590941277356606
+      ],
+      [
+        12.166070938110352,
+        47.59076761949314
+      ],
+      [
+        12.16710090637207,
+        47.58179451254622
+      ],
+      [
+        12.179889678955078,
+        47.5823155737249
+      ],
+      [
+        12.181262969970701,
+        47.590941277356606
+      ]
+    ]
+  ],
+  "_id": "1c2522db-5b8a-4793-b1ab-d7f7d6858f71"
+}

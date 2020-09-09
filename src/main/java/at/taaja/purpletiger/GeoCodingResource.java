@@ -2,17 +2,29 @@ package at.taaja.purpletiger;
 
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.taaja.models.generic.LocationInformation;
 import io.taaja.models.record.spatial.Area;
+import io.taaja.models.record.spatial.LongLat;
 import io.taaja.models.record.spatial.SpatialEntity;
 import io.taaja.models.views.SpatialRecordView;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
 
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.io.DataInput;
+import java.io.IOException;
 
 @Produces(MediaType.APPLICATION_JSON)
 @Path("/v1")
 public class GeoCodingResource {
+
+    @Inject
+    ExtensionRepository extensionRepository;
+
 
     @GET
     @Path("/encode/position")
@@ -55,16 +67,30 @@ public class GeoCodingResource {
     @JsonView({SpatialRecordView.Identity.class})
     @Consumes(MediaType.APPLICATION_JSON)
     public LocationInformation getAffectedAreas(SpatialEntity spatialEntity) {
+        LocationInformation li = new LocationInformation();
+        GeometryFactory gf = new GeometryFactory();
+        Coordinate[] coords = toGeoCoords((Area) spatialEntity);
+        Polygon poly1 = gf.createPolygon(coords);
 
-        //todo: retrieve SpatialEntity from DB
-        LocationInformation locationInformation = new LocationInformation();
-        SpatialEntity extension = new Area();
-        extension.setId("c56b3543-6853-4d86-a7bc-1cde673a5582");
-        locationInformation.getSpatialEntities().add(extension);
-
-
-        return locationInformation;
+        for (SpatialEntity currentSpatialEntity : this.extensionRepository.findAll()) {
+            Coordinate[] currentCoords = toGeoCoords((Area) currentSpatialEntity);
+            if (currentCoords.length > 3) {
+                Polygon poly2 = gf.createPolygon(currentCoords);
+                if (poly1.overlaps(poly2)) {
+                    li.addSpatialEntity(currentSpatialEntity);
+                }
+            }
+        }
+        return li;
     }
 
-
+    private static Coordinate[] toGeoCoords(Area area) {
+        Coordinate[] coords = new Coordinate[area.getCoordinates().get(0).size()];
+        int i = 0;
+        for (LongLat ll : area.getCoordinates().get(0)) {
+            coords[i] = new Coordinate(ll.getLongitude(), ll.getLatitude());
+            i++;
+        }
+        return coords;
+    }
 }
