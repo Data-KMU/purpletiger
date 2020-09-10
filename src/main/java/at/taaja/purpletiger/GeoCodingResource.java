@@ -2,7 +2,6 @@ package at.taaja.purpletiger;
 
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.taaja.models.generic.LocationInformation;
 import io.taaja.models.record.spatial.Area;
 import io.taaja.models.record.spatial.LongLat;
@@ -15,8 +14,6 @@ import org.locationtech.jts.geom.Polygon;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.io.DataInput;
-import java.io.IOException;
 
 @Produces(MediaType.APPLICATION_JSON)
 @Path("/v1")
@@ -69,12 +66,28 @@ public class GeoCodingResource {
     public LocationInformation getAffectedAreas(SpatialEntity spatialEntity) {
         LocationInformation li = new LocationInformation();
         GeometryFactory gf = new GeometryFactory();
-        Coordinate[] coords = toGeoCoords((Area) spatialEntity);
+
+        Area area = (Area) spatialEntity;
+        Coordinate[] coords = toGeoCoords(area);
         Polygon poly1 = gf.createPolygon(coords);
 
+        Area currentArea;
+        float elevation = area.getElevation();
+        float currentElevation;
+        float height = area.getHeight();
+        float currentHeight;
+
         for (SpatialEntity currentSpatialEntity : this.extensionRepository.findAll()) {
-            Coordinate[] currentCoords = toGeoCoords((Area) currentSpatialEntity);
-            if (currentCoords.length > 3) {
+            currentArea = (Area) currentSpatialEntity;
+            Coordinate[] currentCoords = toGeoCoords(currentArea);
+            currentElevation = currentArea.getElevation();
+            currentHeight = currentArea.getHeight();
+
+            //check if Areas overlap vertical
+            if (elevation + height < currentElevation || elevation > currentElevation + currentHeight) continue;
+
+            //check if Entity is Polygon
+            if (currentCoords.length >= 3) {
                 Polygon poly2 = gf.createPolygon(currentCoords);
                 if (poly1.overlaps(poly2)) {
                     li.addSpatialEntity(currentSpatialEntity);
