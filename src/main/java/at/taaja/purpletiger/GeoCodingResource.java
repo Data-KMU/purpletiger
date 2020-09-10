@@ -87,7 +87,7 @@ public class GeoCodingResource {
             if (elevation + height < currentElevation || elevation > currentElevation + currentHeight) continue;
 
             //check if Entity is Polygon
-            if (currentCoords.length >= 3) {
+            if (currentCoords.length >= 4) {
                 Polygon poly2 = gf.createPolygon(currentCoords);
                 if (poly1.overlaps(poly2)) {
                     li.addSpatialEntity(currentSpatialEntity);
