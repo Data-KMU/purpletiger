@@ -52,7 +52,7 @@ public class GeoCodingResource {
             currentElevation = currentArea.getElevation();
             currentHeight = currentArea.getHeight();
 
-            if (altitude == null) {
+            if (altitude != null) {
                 if (altitude < currentElevation || altitude > currentElevation + currentHeight) continue;
             }
 
