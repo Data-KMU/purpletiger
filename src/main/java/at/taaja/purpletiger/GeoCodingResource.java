@@ -9,6 +9,7 @@ import io.taaja.models.record.spatial.SpatialEntity;
 import io.taaja.models.views.SpatialRecordView;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 
 import javax.inject.Inject;
@@ -31,20 +32,39 @@ public class GeoCodingResource {
             @QueryParam("latitude") float latitude,
             @QueryParam("altitude") Float altitude
     ) {
-
-        //todo: retrieve SpatialEntity from DB
-
         LocationInformation locationInformation = new LocationInformation();
         locationInformation.setAltitude(altitude);
         locationInformation.setLatitude(latitude);
         locationInformation.setLongitude(longitude);
 
 
-        SpatialEntity extension = new Area();
-        extension.setId("c56b3543-6853-4d86-a7bc-1cde673a5582");
-        locationInformation.getSpatialEntities().add(extension);
+        GeometryFactory gf = new GeometryFactory();
+        Coordinate pointCoords = new Coordinate(longitude, latitude);
+        Point point = gf.createPoint(pointCoords);
 
+        Area currentArea;
+        float currentElevation;
+        float currentHeight;
 
+        for (SpatialEntity currentSpatialEntity : this.extensionRepository.findAll()) {
+            currentArea = (Area) currentSpatialEntity;
+            Coordinate[] currentCoords = toGeoCoords(currentArea);
+            currentElevation = currentArea.getElevation();
+            currentHeight = currentArea.getHeight();
+
+            if (altitude == null) {
+                if (altitude < currentElevation || altitude > currentElevation + currentHeight) continue;
+            }
+
+            if (currentCoords.length >= 4) {
+                Polygon poly = gf.createPolygon(currentCoords);
+
+                if (point.within(poly)) {
+                    locationInformation.addSpatialEntity(currentSpatialEntity);
+
+                }
+            }
+        }
         return locationInformation;
     }
 
@@ -86,10 +106,10 @@ public class GeoCodingResource {
             //check if Areas overlap vertical
             if (elevation + height < currentElevation || elevation > currentElevation + currentHeight) continue;
 
-            //check if Entity is Polygon
+            //check if Entity is Polygon (Error below 4 points)
             if (currentCoords.length >= 4) {
                 Polygon poly2 = gf.createPolygon(currentCoords);
-                if (poly1.overlaps(poly2)) {
+                if (poly1.overlaps(poly2) || poly1.within(poly2) || poly2.within(poly1)) {
                     li.addSpatialEntity(currentSpatialEntity);
                 }
             }
