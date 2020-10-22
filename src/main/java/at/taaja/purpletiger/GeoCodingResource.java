@@ -6,12 +6,18 @@ import io.smallrye.mutiny.Uni;
 import io.taaja.models.generic.LocationInformation;
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import io.taaja.models.record.spatial.*;
 import io.taaja.models.views.SpatialRecordView;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
+=======
+import io.taaja.models.record.spatial.SpatialEntity;
+import io.taaja.models.views.SpatialRecordView;
+import lombok.extern.jbosslog.JBossLog;
+>>>>>>> Stashed changes
 =======
 import io.taaja.models.record.spatial.SpatialEntity;
 import io.taaja.models.views.SpatialRecordView;
@@ -33,6 +39,9 @@ import java.util.List;
 =======
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -41,6 +50,7 @@ import java.util.List;
 public class GeoCodingResource {
 
     @Inject
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
     ExtensionRepository extensionRepository;
@@ -54,6 +64,9 @@ public class GeoCodingResource {
     LocatorService locatorService;
 >>>>>>> Stashed changes
 
+=======
+    LocatorService locatorService;
+>>>>>>> Stashed changes
 =======
     LocatorService locatorService;
 >>>>>>> Stashed changes
@@ -79,6 +92,7 @@ public class GeoCodingResource {
             );
         });
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
         GeometryFactory gf = new GeometryFactory();
@@ -116,6 +130,8 @@ public class GeoCodingResource {
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     }
 
     @GET
@@ -133,6 +149,7 @@ public class GeoCodingResource {
     @Path("/calculate/intersectingExtensions")
     @JsonView({SpatialRecordView.Identity.class})
     @Consumes(MediaType.APPLICATION_JSON)
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
     public LocationInformation getAffectedSpatialEntities(SpatialEntity spatialEntity) {
@@ -229,6 +246,20 @@ public class GeoCodingResource {
     }
 
 
+=======
+    public Uni<LocationInformation> getAffectedAreas(SpatialEntity spatialEntity) {
+
+        return  Uni.createFrom().item(spatialEntity)
+                .onItem().apply(entity -> {
+                    LocationInformation locationInformation = new LocationInformation();
+                    locationInformation.setSpatialEntities(
+                        this.locatorService.calculateIntersectingEntities(entity)
+                    );
+                    return locationInformation;
+                });
+    }
+
+>>>>>>> Stashed changes
 =======
     public Uni<LocationInformation> getAffectedAreas(SpatialEntity spatialEntity) {
 
