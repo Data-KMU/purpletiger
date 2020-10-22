@@ -66,7 +66,15 @@
         <dependency>
             <groupId>io.taaja</groupId>
             <artifactId>shared</artifactId>
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
             <version>1.20</version>
+=======
+            <version>1.22</version>
+>>>>>>> Stashed changes
+=======
+            <version>1.22</version>
+>>>>>>> Stashed changes
         </dependency>
 
 
@@ -102,6 +110,13 @@
             <optional>true</optional>
             <version>LATEST</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy-mutiny</artifactId>
+        </dependency>
+
+
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-shapefile</artifactId>
