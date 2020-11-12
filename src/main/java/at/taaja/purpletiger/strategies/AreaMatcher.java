@@ -27,7 +27,6 @@ public class AreaMatcher extends SpatialEntityMatcher<Area> {
 
     @Override
     protected boolean calculate(Area area) {
-
         Coordinate[] currentCoords = areaToGeoCoordinates(area);
         Float currentElevation = area.getElevation();
         Float currentHeight = area.getHeight();
