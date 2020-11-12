@@ -4,6 +4,7 @@ import io.taaja.models.record.spatial.Area;
 import io.taaja.models.record.spatial.Corridor;
 import io.taaja.models.record.spatial.Waypoint;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 
 public class PointMatcher extends Matcher {
@@ -47,32 +48,15 @@ public class PointMatcher extends Matcher {
         return false;
     }
 
-    /*
-     * calculate the nearest Waypoint and its distance to the given Point
-     */
     @Override
     protected boolean calculate(Corridor corridor) {
-        double currentDistance;
-        Coordinate[] currentCords = corridorToGeoCoordinates(corridor);
-        double newMinDistance = calcDistancePytagoras(currentCords[0]);
-        Waypoint nearestWaypoint;
+        Coordinate[] coordinates = corridorToGeoCoordinates(corridor);
+        LineString lineStringCorridor = Matcher.geometryFactory.createLineString(coordinates);
+        double distanceToPoint = lineStringCorridor.distance(point);
+        //TODO: Radius aus Corridor getten
+        double radius = 0.010;
 
-        for (int i = 0; i < currentCords.length; i++) {
-            currentDistance = calcDistancePytagoras(currentCords[i]);
-            if (currentDistance < newMinDistance) {
-                newMinDistance = currentDistance;
-                nearestWaypoint = corridor.getCoordinates().get(i);
-            }
-        }
-
-        //TODO: Radius des nearestWaypoint berechnen und mit newMinDistance vergleichen
-
-        return false;
-    }
-
-    public double calcDistancePytagoras(Coordinate coordinate) {
-        double x = coordinate.x, y = coordinate.y, z = coordinate.z;
-        return Math.pow(Math.pow(x - this.longitude, 2) + Math.pow(y - this.latitude, 2) + Math.pow(z + this.altitude, 2), 0.5);
+        return distanceToPoint <= radius;
     }
 
     public static Coordinate[] corridorToGeoCoordinates(Corridor corridor) {
