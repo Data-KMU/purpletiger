@@ -1,0 +1,119 @@
+openapi: 3.0.1
+info:
+  title: Purpl Tiger
+  description: Provides a reverse geocoding service
+  version: "1.3"
+
+servers:
+  - url: http://localhost:8093/
+    description: local dev
+  - url: https://purpletiger.taaja.io/
+    description: production
+
+paths:
+  /v1/calculate/intersectingExtensions:
+    post:
+      summary: >
+        Returns geographical intersecting SpatialExtension
+      description: >
+        The posted SpatialExtension is matches with every extension in the system. If a those SpatialExtensions overlap, it is put in the result.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpatialEntity'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationInformation'
+  /v1/encode/position:
+    get:
+      summary: >
+        Returns the SpatialExtensions which enclose the given coordinates
+      parameters:
+        - name: latitude
+          in: query
+          schema:
+            format: float
+            type: number
+          required: true
+        - name: longitude
+          in: query
+          schema:
+            format: float
+            type: number
+          required: true
+        - name: altitude
+          in: query
+          schema:
+            format: float
+            type: number
+          required: false
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationInformation'
+components:
+  schemas:
+    UniLocationInformation:
+      type: object
+      properties:
+        altitude:
+          format: float
+          type: number
+        created:
+          $ref: '#/components/schemas/Date'
+        latitude:
+          format: float
+          type: number
+        longitude:
+          format: float
+          type: number
+        spatialEntities:
+          $ref: '#/components/schemas/ListSpatialEntity'
+    SpatialEntity:
+      type: object
+      properties:
+        type:
+          enum:
+            - Corridor
+            - Area
+          type: string
+        created:
+          $ref: '#/components/schemas/Date'
+        extensionBehaviour:
+          $ref: '#/components/schemas/ExtensionBehaviour'
+        _id:
+          type: string
+        priority:
+          format: int32
+          type: integer
+        properties:
+          type: object
+        samplers:
+          type: object
+        sensors:
+          type: object
+        validFrom:
+          $ref: '#/components/schemas/Date'
+        validUntil:
+          $ref: '#/components/schemas/Date'
+    ExtensionBehaviour:
+      enum:
+        - Default
+        - ExclusionZone
+        - TrafficZone
+      type: string
+    ListSpatialEntity:
+      type: array
+      items:
+        $ref: '#/components/schemas/SpatialEntity'
+    Date:
+      format: date
+      type: string
