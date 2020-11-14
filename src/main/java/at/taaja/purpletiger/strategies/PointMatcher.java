@@ -53,20 +53,12 @@ public class PointMatcher extends Matcher {
         Coordinate[] coordinates = corridorToGeoCoordinates(corridor);
         LineString lineStringCorridor = Matcher.geometryFactory.createLineString(coordinates);
         double distanceToPoint = lineStringCorridor.distance(point);
-        //TODO: Radius aus Corridor getten
+        //TODO: implement radius
+        //hardcoded Testwert:
         double radius = 0.010;
 
         return distanceToPoint <= radius;
     }
 
-    public static Coordinate[] corridorToGeoCoordinates(Corridor corridor) {
-        int size = corridor.getCoordinates().size();
-        Coordinate[] coordinates = new Coordinate[size];
-        Waypoint current;
-        for (int i = 0; i < size; i++) {
-            current = corridor.getCoordinates().get(i);
-            coordinates[i] = new Coordinate(current.getLongitude(), current.getLatitude(), current.getAltitude());
-        }
-        return coordinates;
-    }
+
 }
