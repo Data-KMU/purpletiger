@@ -48,12 +48,17 @@ public class LocatorService {
     private List<SpatialEntity> iterate(Matcher m){
 
         List<SpatialEntity> intersectingEntities = new ArrayList<>();
+        /*
         try{
             m.initialize();
         }catch (Exception e){
             log.error("cant initialize matcher (" + m.getClass().getSimpleName() + "). Reason: " + e.getMessage(), e);
             return intersectingEntities;
         }
+
+         */
+
+
 
         for (SpatialEntity toCheck : this.extensionRepository.findAll()){
             try {

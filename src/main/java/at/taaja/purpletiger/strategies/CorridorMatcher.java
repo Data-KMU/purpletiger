@@ -20,7 +20,6 @@ public class CorridorMatcher extends SpatialEntityMatcher<Corridor> {
     private LineString lineString;
     private Float elevationMin;
     private Float elevationMax;
-    private Float radius;
 
     public CorridorMatcher(Corridor corridor) {
         super(corridor);
@@ -32,20 +31,25 @@ public class CorridorMatcher extends SpatialEntityMatcher<Corridor> {
         this.lineString = Matcher.geometryFactory.createLineString(coordinates);
         List<Float> elevations = new ArrayList<>();
         for (int i = 0; i < this.spatialEntity.getCoordinates().size(); i++) {
-            elevations.add(this.spatialEntity.getCoordinates().get(i).getAltitude());
+            if (this.spatialEntity.getCoordinates().get(i).getAltitude() != null)
+                elevations.add(this.spatialEntity.getCoordinates().get(i).getAltitude());
         }
-        this.elevationMin = Collections.min(elevations);
-        this.elevationMax = Collections.max(elevations);
+        if(!elevations.isEmpty()) {
+            this.elevationMin = Collections.min(elevations);
+            this.elevationMax = Collections.max(elevations);
+        }else{
+            this.elevationMin = null;
+            this.elevationMax = null;
+        }
     }
 
     @Override
     protected boolean calculate(Area area) {
         Coordinate[] coordinates = areaToGeoCoordinates(area);
         Polygon poly = Matcher.geometryFactory.createPolygon(coordinates);
-        Float areaElevation = area.getElevation(), areaHeight = area.getHeight();
+        double areaElevation = area.getElevation(), areaHeight = area.getHeight();
 
         if (elevationMax < areaElevation || elevationMin > (areaElevation + areaHeight)) return false;
-
         if (coordinates.length >= 4) {
             return (poly.intersects(lineString));
         }
@@ -56,13 +60,10 @@ public class CorridorMatcher extends SpatialEntityMatcher<Corridor> {
     protected boolean calculate(Corridor corridor) {
         Coordinate[] coordinates = corridorToGeoCoordinates(corridor);
         LineString lineStringCorridor = Matcher.geometryFactory.createLineString(coordinates);
-        double distanceToPoint = lineStringCorridor.distance(lineString);
-        Float radiusCorridor;
-
-        //TODO implement radius
-        //if(distanceToPoint<(radius + radiusCorridor))
-
-        return false;
+        int width1 = getWidthOfNearestWaypoint(corridor, this.spatialEntity);
+        int width2 = getWidthOfNearestWaypoint(this.spatialEntity, corridor);
+        int distance = getDistanceInMeters(corridor, this.spatialEntity);
+        return (lineStringCorridor.distance(lineString) <= 0.0 && (width1 + width2) > distance);
     }
 
 }

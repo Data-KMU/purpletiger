@@ -1,6 +1,5 @@
 package at.taaja.purpletiger;
 
-
 import com.fasterxml.jackson.annotation.JsonView;
 import io.smallrye.mutiny.Uni;
 import io.taaja.models.generic.LocationInformation;
@@ -38,7 +37,7 @@ public class GeoCodingResource {
         //async
         return Uni.createFrom().item(locationInformation).onItem().invoke(li -> {
             li.setSpatialEntities(
-                    locatorService.calculateIntersectingEntities(li.getLongitude(),li.getLatitude(),li.getAltitude())
+                    locatorService.calculateIntersectingEntities(li.getLongitude(), li.getLatitude(), li.getAltitude())
             );
         });
 
@@ -47,7 +46,7 @@ public class GeoCodingResource {
     @GET
     @Path("/encode/position")
     @JsonView({SpatialRecordView.Identity.class})
-    public Uni<LocationInformation>  getPos(
+    public Uni<LocationInformation> getPos(
             @QueryParam("longitude") float longitude,
             @QueryParam("latitude") float latitude
     ) {
@@ -61,11 +60,11 @@ public class GeoCodingResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Uni<LocationInformation> getAffectedAreas(SpatialEntity spatialEntity) {
 
-        return  Uni.createFrom().item(spatialEntity)
+        return Uni.createFrom().item(spatialEntity)
                 .onItem().apply(entity -> {
                     LocationInformation locationInformation = new LocationInformation();
                     locationInformation.setSpatialEntities(
-                        this.locatorService.calculateIntersectingEntities(entity)
+                            this.locatorService.calculateIntersectingEntities(entity)
                     );
                     return locationInformation;
                 });

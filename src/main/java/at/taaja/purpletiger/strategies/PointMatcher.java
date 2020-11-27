@@ -53,11 +53,7 @@ public class PointMatcher extends Matcher {
         Coordinate[] coordinates = corridorToGeoCoordinates(corridor);
         LineString lineStringCorridor = Matcher.geometryFactory.createLineString(coordinates);
         double distanceToPoint = lineStringCorridor.distance(point);
-        //TODO: implement radius
-        //hardcoded Testwert:
-        double radius = 0.010;
-
-        return distanceToPoint <= radius;
+        return distanceToPoint <= 0;
     }
 
 
