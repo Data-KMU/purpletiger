@@ -48,7 +48,6 @@ public class LocatorService {
     private List<SpatialEntity> iterate(Matcher m){
 
         List<SpatialEntity> intersectingEntities = new ArrayList<>();
-        /*
         try{
             m.initialize();
         }catch (Exception e){
@@ -56,11 +55,7 @@ public class LocatorService {
             return intersectingEntities;
         }
 
-         */
-
-
-
-        for (SpatialEntity toCheck : this.extensionRepository.findAll()){
+         for (SpatialEntity toCheck : this.extensionRepository.findAll()){
             try {
                 if(m.intersects(toCheck)){
                     intersectingEntities.add(toCheck);

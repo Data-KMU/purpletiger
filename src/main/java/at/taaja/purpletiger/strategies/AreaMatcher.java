@@ -2,7 +2,6 @@ package at.taaja.purpletiger.strategies;
 
 import io.taaja.models.record.spatial.Area;
 import io.taaja.models.record.spatial.Corridor;
-import io.taaja.models.record.spatial.LongLat;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Polygon;
@@ -63,4 +62,6 @@ public class AreaMatcher extends SpatialEntityMatcher<Area> {
         }
         return false;
     }
+
+
 }
