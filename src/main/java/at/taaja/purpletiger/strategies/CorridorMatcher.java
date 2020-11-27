@@ -56,9 +56,9 @@ public class CorridorMatcher extends SpatialEntityMatcher<Corridor> {
         //quarkus bug
         //https://github.com/quarkusio/quarkus/issues/12136
         //https://github.com/debrief/debrief/issues/1003
-        log.error("Ignore the following: ");
+        log.warn("Ignore the following: ");
         crs = CRS.decode("EPSG:4326");
-        log.error("--- stop ignore ---");
+        log.warn("--- stop ignore ---");
         gc = new GeodeticCalculator(crs);
 
     }
