@@ -9,7 +9,7 @@ public abstract class SpatialEntityMatcher<T extends SpatialEntity> extends Matc
 
     protected final T spatialEntity;
 
-    public SpatialEntityMatcher(T spatialEntity){
+    public SpatialEntityMatcher(T spatialEntity) {
         this.spatialEntity = spatialEntity;
     }
 
@@ -23,8 +23,4 @@ public abstract class SpatialEntityMatcher<T extends SpatialEntity> extends Matc
         }
         return coords;
     }
-
-
-
-
 }

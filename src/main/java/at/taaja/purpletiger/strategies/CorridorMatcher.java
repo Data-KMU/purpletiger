@@ -7,13 +7,11 @@ import lombok.extern.jbosslog.JBossLog;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.GeodeticCalculator;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.*;
 import org.locationtech.jts.operation.distance.DistanceOp;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import javax.sound.sampled.Line;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -22,9 +20,8 @@ import java.util.List;
 @JBossLog
 public class CorridorMatcher extends SpatialEntityMatcher<Corridor> {
 
-    CoordinateReferenceSystem crs;
-
-    GeodeticCalculator gc;
+    static CoordinateReferenceSystem crs;
+    static GeodeticCalculator gc;
 
     private LineString lineString;
     private Float elevationMin;
@@ -44,10 +41,10 @@ public class CorridorMatcher extends SpatialEntityMatcher<Corridor> {
             if (this.spatialEntity.getCoordinates().get(i).getAltitude() != null)
                 elevations.add(this.spatialEntity.getCoordinates().get(i).getAltitude());
         }
-        if(!elevations.isEmpty()) {
+        if (!elevations.isEmpty()) {
             this.elevationMin = Collections.min(elevations);
             this.elevationMax = Collections.max(elevations);
-        }else{
+        } else {
             this.elevationMin = null;
             this.elevationMax = null;
         }
@@ -68,10 +65,13 @@ public class CorridorMatcher extends SpatialEntityMatcher<Corridor> {
         Coordinate[] coordinates = areaToGeoCoordinates(area);
         Polygon poly = Matcher.geometryFactory.createPolygon(coordinates);
         double areaElevation = area.getElevation(), areaHeight = area.getHeight();
+        int distanceInMeters = getDistanceInMeters(this.spatialEntity, poly);
+        int widthCorridor = getWidthOfNearestWaypoint(this.spatialEntity, poly);
 
         if (elevationMax < areaElevation || elevationMin > (areaElevation + areaHeight)) return false;
         if (coordinates.length >= 4) {
-            return (poly.intersects(lineString));
+            //wenn sich Area & Corridor nicht interescten wird geprüft, ob die Distanz < Width ist, dann würde die Width des Corridors die Area intersecten.
+            return (poly.intersects(lineString) || distanceInMeters < widthCorridor);
         }
         return false;
     }
@@ -82,42 +82,57 @@ public class CorridorMatcher extends SpatialEntityMatcher<Corridor> {
         LineString lineStringCorridor = Matcher.geometryFactory.createLineString(coordinates);
         int width1 = getWidthOfNearestWaypoint(corridor, this.spatialEntity);
         int width2 = getWidthOfNearestWaypoint(this.spatialEntity, corridor);
-        int distance = getDistanceInMeters(corridor, this.spatialEntity);
-        return (lineStringCorridor.distance(lineString) <= 0.0 && (width1 + width2) > distance);
-    }
+        Coordinate[] coordinates1 = corridorToGeoCoordinates(this.spatialEntity);
+        LineString lineStringCorridor1 = Matcher.geometryFactory.createLineString(coordinates1);
+        int distance = getDistanceInMeters(corridor, lineStringCorridor1);
 
+        //wenn die Distance zwischen den Corridoren 0 ist, intersecten sie sich.
+        //wenn sie größer 0 ist wird gecheckt, ob beide widths zusammen größer als die Distance von den Waypoints ist --> überlappende Radien
+        return (lineStringCorridor.distance(lineString) <= 0.0 || (width1 + width2) > distance);
+    }
 
     @SneakyThrows
-    public int getDistanceInMeters(Corridor corridor1, Corridor corridor2) {
-        Coordinate[] coordinates1 = corridorToGeoCoordinates(corridor1);
-        Coordinate[] coordinates2 = corridorToGeoCoordinates(corridor2);
-        LineString lineString = geometryFactory.createLineString(coordinates2);
+    public static int getDistanceInMeters(Corridor corridor1, Geometry geometry) {
+        Coordinate[] coordinatesCorridor = corridorToGeoCoordinates(corridor1);
 
-        int minDistanceIndex1 = getMinDistanceIndex(coordinates1,lineString);
-        Point nearestPoint1 = geometryFactory.createPoint(coordinates1[minDistanceIndex1]);
+        int minDistanceIndex1 = 0;
+        minDistanceIndex1 = getMinDistanceIndex(coordinatesCorridor, geometry);
+        Point nearestPoint = geometryFactory.createPoint(coordinatesCorridor[minDistanceIndex1]);
+        gc.setStartingPosition(JTS.toDirectPosition(DistanceOp.nearestPoints(geometry, nearestPoint)[0], crs));
+        gc.setDestinationPosition(JTS.toDirectPosition(coordinatesCorridor[minDistanceIndex1], crs));
 
-        gc.setStartingPosition(JTS.toDirectPosition(DistanceOp.nearestPoints(lineString, nearestPoint1 )[0], crs));
-        gc.setDestinationPosition(JTS.toDirectPosition(coordinates1[minDistanceIndex1], crs));
-
-        double distance1 = gc.getOrthodromicDistance();
-        return (int) distance1;
+        double distance = gc.getOrthodromicDistance();
+        return (int) distance;
     }
 
-    public int getWidthOfNearestWaypoint(Corridor corridor1, Corridor corridor2){
+
+    public int getWidthOfNearestWaypoint(Corridor corridor1, Corridor corridor2) {
         LineString lineString = geometryFactory.createLineString(corridorToGeoCoordinates(corridor2));
-        int minDistanceIndex = getMinDistanceIndex(corridorToGeoCoordinates(corridor1),lineString);
+        int minDistanceIndex = getMinDistanceIndex(corridorToGeoCoordinates(corridor1), lineString);
         LinkedHashMap<String, Object> parsed = (LinkedHashMap) corridor1.getCoordinates().get(minDistanceIndex).getAdditionalData();
         return (Integer) parsed.get("width");
     }
 
-    public int getMinDistanceIndex(Coordinate[] coordinates1, LineString lineString){
+    public static int getWidthOfNearestWaypoint(Corridor corridor, Polygon poly) {
+        int minDistanceIndex = getMinDistanceIndex(corridorToGeoCoordinates(corridor), poly);
+        LinkedHashMap<String, Object> parsed = (LinkedHashMap) corridor.getCoordinates().get(minDistanceIndex).getAdditionalData();
+        return (Integer) parsed.get("width");
+    }
+
+    public static int getWidthOfNearestWaypoint(Corridor corridor, Point point) {
+        int minDistanceIndex = getMinDistanceIndex(corridorToGeoCoordinates(corridor), point);
+        LinkedHashMap<String, Object> parsed = (LinkedHashMap) corridor.getCoordinates().get(minDistanceIndex).getAdditionalData();
+        return (Integer) parsed.get("width");
+    }
+
+    public static int getMinDistanceIndex(Coordinate[] coordinates1, Geometry geometry) {
         Point p = geometryFactory.createPoint(coordinates1[0]);
-        double newMinDistance = p.distance(lineString);
+        double newMinDistance = p.distance(geometry);
         int minDistanceIndex = 0;
         double currentDistance;
         for (int i = 0; i < coordinates1.length; i++) {
             p = geometryFactory.createPoint(coordinates1[i]);
-            currentDistance = p.distance(lineString);
+            currentDistance = p.distance(geometry);
             if (currentDistance < newMinDistance) {
                 newMinDistance = currentDistance;
                 minDistanceIndex = i;
@@ -125,7 +140,6 @@ public class CorridorMatcher extends SpatialEntityMatcher<Corridor> {
         }
         return minDistanceIndex;
     }
-
 
 
 }

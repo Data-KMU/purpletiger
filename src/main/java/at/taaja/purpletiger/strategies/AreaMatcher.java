@@ -55,10 +55,12 @@ public class AreaMatcher extends SpatialEntityMatcher<Area> {
         Float elevationMin = Collections.min(elevations);
         Float elevationMax = Collections.max(elevations);
 
-        if (elevationMax < elevation || elevationMin > (elevation + height)) return false;
+        int distanceInMeters = CorridorMatcher.getDistanceInMeters(corridor, poly);
+        int widthCorridor = CorridorMatcher.getWidthOfNearestWaypoint(corridor, poly);
 
+        if (elevationMax < elevation || elevationMin > (elevation + height)) return false;
         if (coordinates.length >= 4) {
-            return (poly.intersects(lineStringCorridor));
+            return (poly.intersects(lineStringCorridor) || distanceInMeters < widthCorridor);
         }
         return false;
     }

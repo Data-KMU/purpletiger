@@ -52,8 +52,9 @@ public class PointMatcher extends Matcher {
         Coordinate[] coordinates = corridorToGeoCoordinates(corridor);
         LineString lineStringCorridor = Matcher.geometryFactory.createLineString(coordinates);
         double distanceToPoint = lineStringCorridor.distance(point);
-        return distanceToPoint <= 0;
+        int distanceInMeters = CorridorMatcher.getDistanceInMeters(corridor, point);
+        int widthCorridor = CorridorMatcher.getWidthOfNearestWaypoint(corridor, point);
+
+        return (distanceToPoint <= 0 || distanceInMeters < widthCorridor);
     }
-
-
 }
