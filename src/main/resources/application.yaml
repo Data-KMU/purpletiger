@@ -1,6 +1,25 @@
 app:
   database: "taaja"
 
+mp:
+  messaging:
+    incoming:
+      raw-sensor-data:
+        type: "smallrye-kafka"
+        bootstrap:
+          servers: "193.26.156.80:9092"
+        value:
+          deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+    outgoing:
+      raw-spatial-sensor-data:
+        type: "smallrye-kafka"
+        bootstrap:
+          servers: "193.26.156.80:9092"
+        value:
+          serializer: "org.apache.kafka.common.serialization.StringSerializer"
+
+
+
 quarkus:
   http:
     port: 8093
