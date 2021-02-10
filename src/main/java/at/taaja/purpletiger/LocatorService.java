@@ -3,6 +3,7 @@ package at.taaja.purpletiger;
 import at.taaja.purpletiger.strategies.*;
 import io.quarkus.runtime.StartupEvent;
 import io.taaja.models.generic.Coordinates;
+import io.taaja.models.raw.SensorData;
 import io.taaja.models.record.spatial.Area;
 import io.taaja.models.record.spatial.Corridor;
 import io.taaja.models.record.spatial.SpatialEntity;
@@ -47,6 +48,10 @@ public class LocatorService {
 
     public List<SpatialEntity> calculateIntersectingEntities(Coordinates coordinates) {
         return this.iterate(new PointMatcher(coordinates.getLongitude(), coordinates.getLatitude(), coordinates.getAltitude()));
+    }
+
+    public List<SpatialEntity> calculateIntersectingEntities(SensorData sensorData) {
+        return this.iterate(new SphereMatcher(sensorData));
     }
 
 

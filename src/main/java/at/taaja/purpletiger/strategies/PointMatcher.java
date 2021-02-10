@@ -9,11 +9,11 @@ import org.locationtech.jts.geom.Point;
 public class PointMatcher extends Matcher {
 
 
-    private final float longitude;
-    private final float latitude;
-    private final Float altitude;
+    protected final float longitude;
+    protected final float latitude;
+    protected final Float altitude;
 
-    private Point point;
+    protected Point point;
 
     public PointMatcher(float longitude, float latitude, Float altitude) {
         this.longitude = longitude;

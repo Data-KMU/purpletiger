@@ -25,7 +25,8 @@ public class KafkaProcessorService {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     /**
-     * Test: {"longitude":11.4,"latitude":43.1,"altitude":100.2,"informationType":"vehicleInformation","created":1611916191363,"accuracy":1.0,"payload":"payload"}
+     * Test Input: {"longitude":11.4,"latitude":43.1,"altitude":100.2,"informationType":"vehicleInformation","created":1611916191363,"accuracy":1.0,"payload":"payload"}
+     * Test Output: {"longitude":11.4,"latitude":43.1,"altitude":100.2,"informationType":"vehicleInformation","created":1611916191363,"accuracy":1.0,"payload":"payload", "intersectingSpatialEntities": ["id1", "id2"]}
      *
      * @param rawData
      * @return
