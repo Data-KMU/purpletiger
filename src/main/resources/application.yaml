@@ -19,7 +19,6 @@ mp:
           servers: "193.26.156.80:9092"
         value:
           serializer: "org.apache.kafka.common.serialization.StringSerializer"
-        acks: "all"
 
 
 

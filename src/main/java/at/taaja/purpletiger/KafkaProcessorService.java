@@ -25,10 +25,6 @@ public class KafkaProcessorService {
     @Inject
     LocatorService locatorService;
 
-//    @Inject
-//    @Channel("raw-spatial-sensor-data")
-//    Emitter<String> publisher;
-
     private ObjectMapper objectMapper = new ObjectMapper();
 
     /**
@@ -42,6 +38,8 @@ public class KafkaProcessorService {
     @Incoming("raw-sensor-data")
     public String process(Message<String> kafkaMessage) {
 
+        //ack message
+        kafkaMessage.ack();
         try {
 
             IncomingKafkaRecord<String, String> incomingKafkaRecord = (IncomingKafkaRecord) kafkaMessage;
@@ -70,9 +68,6 @@ public class KafkaProcessorService {
             );
 
             return objectMapper.writeValueAsString(spatialSensorData);
-//            this.publisher.send(
-//                    objectMapper.writeValueAsString(spatialSensorData)
-//            );
 
         } catch (JsonProcessingException e) {
             log.warn("cant parse SensorData: " + e.getMessage());
