@@ -10,6 +10,8 @@ mp:
           servers: "193.26.156.80:9092"
         value:
           deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+        group:
+          id: "purple-tiger"
     outgoing:
       raw-spatial-sensor-data:
         type: "smallrye-kafka"
@@ -17,6 +19,8 @@ mp:
           servers: "193.26.156.80:9092"
         value:
           serializer: "org.apache.kafka.common.serialization.StringSerializer"
+        acks: "all"
+
 
 
 

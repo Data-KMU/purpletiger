@@ -51,7 +51,7 @@ public class LocatorService {
     }
 
     public List<SpatialEntity> calculateIntersectingEntities(SensorData sensorData) {
-        return this.iterate(new SphereMatcher(sensorData));
+        return this.iterate(new PointMatcher(sensorData.getLongitude(), sensorData.getLatitude(), sensorData.getAltitude()));
     }
 
 

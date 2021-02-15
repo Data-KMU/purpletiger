@@ -18,7 +18,7 @@ public class SphereMatcher extends PointMatcher {
     }
     public SphereMatcher(SensorData sensorData) {
         super(sensorData.getLongitude(), sensorData.getLatitude(), sensorData.getAltitude());
-        this.accuracy = sensorData.getAccuracy();
+        this.accuracy = sensorData.getDeviation();
     }
 
     @Override

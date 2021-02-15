@@ -66,7 +66,7 @@
         <dependency>
             <groupId>io.taaja</groupId>
             <artifactId>shared</artifactId>
-            <version>1.1.1</version>
+            <version>1.1.6</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -133,7 +133,7 @@
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-epsg-hsql</artifactId>
-            <version>22.2</version>
+            <version>${geotools.version}</version>
         </dependency>
 
         <dependency>
