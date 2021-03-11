@@ -28,14 +28,14 @@ public class LocatorService {
     }
 
 
-    public List<SpatialEntity> calculateIntersectingEntities(SpatialEntity spatialEntity){
+    public List<SpatialEntity> calculateIntersectingEntities(SpatialEntity spatialEntity) {
 
         SpatialEntityMatcher spatialEntityMatcher;
-        if(spatialEntity instanceof Area){
-            spatialEntityMatcher = new AreaMatcher((Area)spatialEntity);
-        }else if(spatialEntity instanceof Corridor) {
-            spatialEntityMatcher = new CorridorMatcher((Corridor)spatialEntity);
-        }else {
+        if (spatialEntity instanceof Area) {
+            spatialEntityMatcher = new AreaMatcher((Area) spatialEntity);
+        } else if (spatialEntity instanceof Corridor) {
+            spatialEntityMatcher = new CorridorMatcher((Corridor) spatialEntity);
+        } else {
             throw new WebApplicationException("unknown type: " + spatialEntity.getClass().getSimpleName());
         }
 
@@ -55,22 +55,22 @@ public class LocatorService {
     }
 
 
-    private List<SpatialEntity> iterate(Matcher m){
+    private List<SpatialEntity> iterate(Matcher m) {
 
         List<SpatialEntity> intersectingEntities = new ArrayList<>();
-        try{
+        try {
             m.initialize();
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("cant initialize matcher (" + m.getClass().getSimpleName() + "). Reason: " + e.getMessage(), e);
             return intersectingEntities;
         }
 
-         for (SpatialEntity toCheck : this.extensionRepository.findAll()){
+        for (SpatialEntity toCheck : this.extensionRepository.findAll()) {
             try {
-                if(m.intersects(toCheck)){
+                if (m.intersects(toCheck)) {
                     intersectingEntities.add(toCheck);
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 log.error("cant process matching (entity id: " + toCheck.getId() + " on matcher " +
                         m.getClass().getSimpleName() + "). Reason: " + e.getMessage(), e);
             }

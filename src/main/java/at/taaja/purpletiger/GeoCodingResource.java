@@ -27,20 +27,19 @@ public class GeoCodingResource {
             @QueryParam("longitude") float longitude,
             @QueryParam("latitude") float latitude,
             @QueryParam("altitude") Float altitude
+
     ) {
 
         LocationInformation locationInformation = new LocationInformation();
         locationInformation.setAltitude(altitude);
         locationInformation.setLatitude(latitude);
         locationInformation.setLongitude(longitude);
-
-        //async
-        return Uni.createFrom().item(locationInformation).onItem().invoke(li -> {
-            li.setSpatialEntities(
-                    locatorService.calculateIntersectingEntities(li.getLongitude(), li.getLatitude(), li.getAltitude())
-            );
-        });
-
+            //async
+            return Uni.createFrom().item(locationInformation).onItem().invoke(li -> {
+                li.setSpatialEntities(
+                        locatorService.calculateIntersectingEntities(li.getLongitude(), li.getLatitude(), li.getAltitude())
+                );
+            });
     }
 
     @GET
