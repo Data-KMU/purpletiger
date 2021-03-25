@@ -138,6 +138,12 @@
 
         <dependency>
             <groupId>org.geotools</groupId>
+            <artifactId>gt-geometry</artifactId>
+            <version>20.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.geotools</groupId>
             <artifactId>gt-swing</artifactId>
             <version>${geotools.version}</version>
         </dependency>

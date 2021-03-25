@@ -37,13 +37,11 @@ public class PointMatcher extends Matcher {
         if (altitude != null && (altitude < currentElevation || altitude > currentElevation + currentHeight)) {
             return false;
         }
-
         if (currentCoords.length >= 4) {
             return point.within(
                     Matcher.geometryFactory.createPolygon(currentCoords)
             );
         }
-
         return false;
     }
 
